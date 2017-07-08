@@ -1,30 +1,26 @@
-/**
- * The MIT License (MIT)
- *
- * Copyright © Daniel Adamitskiy. All Rights Reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+/// Copyright © Daniel Adamitskiy. All Rights Reserved.
 
-#include <Core.h>
+#include <DA.Core.h>
 
-int main(int argc, char* argv[])
+int GlobalFunc(int a, float b)
+{
+	return a + (int)b;
+}
+
+class SomeClass
+{
+public:
+
+	int MemberFunc(int a, float b) 
+	{
+		return a + (int)b;
+	}
+};
+
+Delegate<int(int, float)> gGlobalFunctionDelegate(Delegate<int(int, float)>::Create<&GlobalFunc>());
+Delegate<int(int, float)> gMemberFunctionDelegate;
+
+int main(int32 argc, int8** argv)
 {
 	// Check if you're in debug or release with:
 #if defined(DA_BUILD_DEBUG) && (DA_BUILD_DEBUG == 1)
@@ -64,6 +60,18 @@ int main(int argc, char* argv[])
 	// - DA_PLATFORM_UNIX		
 	// - DA_PLATFORM_ANDROID		
 	// - DA_PLATFORM_APPLE		
+
+	// Call the global/static function delegate.
+	int result = gGlobalFunctionDelegate(5, 10.f);
+	printf("gGlobalFunctionDelegate result=%d\n", result);
+
+	// Call the member function delegate.
+	SomeClass* sc = new SomeClass();
+	gMemberFunctionDelegate = gMemberFunctionDelegate.Create<SomeClass, &SomeClass::MemberFunc>(sc);
+	result = gMemberFunctionDelegate(result, 5.f);
+	printf("gMemberFunctionDelegate result=%d\n", result);
+	delete sc;
+	sc = nullptr;
 
 	return 0;
 }

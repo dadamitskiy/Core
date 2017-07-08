@@ -11,6 +11,7 @@ file(GLOB_RECURSE Core_Module_Src_Private
 )
 
 add_library(Core SHARED ${Core_Module_Src_Public} ${Core_Module_Src_Private})
+set_target_properties(Core PROPERTIES FOLDER Source)
 
 source_group("Public" FILES ${Core_Module_Src_Public})
 source_group("Private" FILES ${Core_Module_Src_Private})
